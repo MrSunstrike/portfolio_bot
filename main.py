@@ -5,9 +5,9 @@ from telegram.ext import Application
 from dotenv import load_dotenv
 import sys
 
-from handlers import (start_handler, get_docs_handler, choose_photo_handler, 
+from handlers import (start_handler, send_docs_handler, choose_photo_handler, 
                       get_back_handler, send_photo_handler,
-                      voice_message_handler)
+                      voice_message_handler, send_essay_handler)
 
 # инициируем логгер
 logger = setup_logger("main")
@@ -26,11 +26,12 @@ except Exception as e:
 
 # регистрируем все ручки
 application.add_handler(start_handler)
-application.add_handler(get_docs_handler)
+application.add_handler(send_docs_handler)
 application.add_handler(choose_photo_handler)
 application.add_handler(get_back_handler)
 application.add_handler(send_photo_handler)
 application.add_handler(voice_message_handler)
+application.add_handler(send_essay_handler)
 
 
 # слушаем сообщения пользователей

@@ -31,12 +31,12 @@ choose_photo_handler = MessageHandler(
 )
 
 
-async def get_docs(update, context):
+async def send_docs(update, context):
     '''Функция для хэндлера, отправляющего доку'''
     await update.message.reply_text(TEXT['docs'], reply_markup=main_markup)
 
-get_docs_handler = MessageHandler(
-    filters.Regex(f"^{KB['main'][2][0]}$"), get_docs
+send_docs_handler = MessageHandler(
+    filters.Regex(f"^{KB['main'][2][0]}$"), send_docs
 )
 
 
@@ -87,6 +87,7 @@ async def voice_message(update, context):
                                    sticker=STICKER['error'])
         await update.message.reply_text(TEXT['what'])
     else:
+        logger.info(f'Контент получен: "{text}"')
         # обработать полученное сообщение
         await update.message.reply_text(TEXT['repeat'].format(text))
         if re.search(MSG['gpt'], text, flags=re.IGNORECASE):
@@ -107,9 +108,21 @@ async def voice_message(update, context):
                                    sticker=STICKER['error'])
             await context.bot.send_audio(chat_id=update.effective_chat.id,
                                  audio=open('./media/audio/error.ogg', 'rb'))
-    print(text)
+
     # удалить временные аудиофайлы
     os.remove(file_path)
     os.remove(file_path[0:-3] + 'wav')
 
 voice_message_handler = MessageHandler(filters.VOICE, voice_message)
+
+async def send_essay(update, context):
+    '''Функция для хэндлера, отправляющего эссе'''
+    photo_path = './media/img/hrt.jpg'
+    await context.bot.send_photo(chat_id=update.effective_chat.id,
+                                 photo=open(photo_path, 'rb'),
+                                 caption=TEXT['essay'],
+                                 parse_mode='html')
+
+send_essay_handler = MessageHandler(
+    filters.Regex(f"^{KB['main'][1][0]}$"), send_essay
+)
