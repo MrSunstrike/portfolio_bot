@@ -103,17 +103,17 @@ async def voice_message(update, context):
         # обработать полученное сообщение
         await update.message.reply_text(TEXT['repeat'].format(text))
         if re.search(MSG['gpt'], text, flags=re.IGNORECASE):
-            file_path = './media/audio/gpt.ogg'
+            path = './media/audio/gpt.ogg'
         elif re.search(MSG['sql'], text, flags=re.IGNORECASE):
-            file_path = './media/audio/sql.ogg'
+            path = './media/audio/sql.ogg'
         elif re.search(MSG['love'], text, flags=re.IGNORECASE):
-            file_path = './media/audio/love.ogg'
+            path = './media/audio/love.ogg'
         else:
-            file_path = './media/audio/error.ogg'
+            path = './media/audio/error.ogg'
             await context.bot.send_sticker(chat_id=update.effective_chat.id,
                                            sticker=STICKER['error'])
         await context.bot.send_audio(chat_id=update.effective_chat.id,
-                                     audio=open(file_path, 'rb'))
+                                     audio=open(path, 'rb'))
 
     # удалить временные аудиофайлы
     os.remove(file_path)
