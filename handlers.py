@@ -52,14 +52,18 @@ async def send_photo(update, context):
     '''Функция для хэндлера отправки фотографий'''
     if update.message.text == KB['photo'][0][0]:
         folder_path = "./media/img/school/"
+        caption = TEXT['school']
     elif update.message.text == KB['photo'][1][0]:
         folder_path = "./media/img/selfie/"
+        caption = TEXT['selfie']
     else:
         folder_path = "./media/img/work/"
+        caption = TEXT['work']
     photos = os.listdir(folder_path)
     photo_path = os.path.join(folder_path, random.choice(photos))
     await context.bot.send_photo(chat_id=update.effective_chat.id,
-                                 photo=open(photo_path, 'rb'))
+                                 photo=open(photo_path, 'rb'),
+                                 caption=caption)
 
 send_photo_handler = MessageHandler(
     filters.Regex(
