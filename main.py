@@ -7,7 +7,7 @@ from telegram.ext import Application
 from handlers import (choose_photo_handler, get_back_handler,
                       send_docs_handler, send_essay_handler,
                       send_photo_handler, send_voice_handler, start_handler,
-                      voice_message_handler)
+                      voice_message_handler, send_rep_handler)
 from logger import setup_logger
 
 # инициируем логгер
@@ -33,6 +33,7 @@ application.add_handler(get_back_handler)
 application.add_handler(send_photo_handler)
 application.add_handler(voice_message_handler)
 application.add_handler(send_essay_handler)
+application.add_handler(send_rep_handler)
 application.add_handler(send_voice_handler)
 
 

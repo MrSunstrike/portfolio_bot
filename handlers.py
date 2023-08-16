@@ -56,6 +56,17 @@ get_back_handler = MessageHandler(
 )
 
 
+async def send_rep(update, context):
+    '''Функция для хэндлера, отправляющего репозиторий бота'''
+    await update.message.reply_text(TEXT['rep'],
+                                    reply_markup=main_markup,
+                                    parse_mode='html')
+
+send_rep_handler = MessageHandler(
+    filters.Regex(f"^{KB['main'][3][0]}$"), send_rep
+)
+
+
 async def send_voice(update, context):
     '''Функция для хэндлера, возвращающего основную клавиатуру'''
     text = update.message.text
