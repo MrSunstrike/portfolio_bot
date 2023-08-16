@@ -33,7 +33,9 @@ choose_photo_handler = MessageHandler(
 
 async def send_docs(update, context):
     '''Функция для хэндлера, отправляющего доку'''
-    await update.message.reply_text(TEXT['docs'], reply_markup=main_markup)
+    await update.message.reply_text(TEXT['docs'],
+                                    reply_markup=main_markup,
+                                    parse_mode='html')
 
 send_docs_handler = MessageHandler(
     filters.Regex(f"^{KB['main'][2][0]}$"), send_docs
