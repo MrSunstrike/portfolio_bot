@@ -1,5 +1,6 @@
 import logging
-from config import LOG_FORMAT
+
+LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 logging.basicConfig(format=LOG_FORMAT, level=logging.INFO)
 logging.getLogger("httpx").setLevel(logging.WARNING)
