@@ -56,6 +56,30 @@ get_back_handler = MessageHandler(
 )
 
 
+async def send_voice(update, context):
+    '''Функция для хэндлера, возвращающего основную клавиатуру'''
+    text = update.message.text
+
+    # путь к файлу ответа
+    path = ''
+
+    if re.search(MSG['gpt'], text, flags=re.IGNORECASE):
+        path = './media/audio/gpt.ogg'
+    elif re.search(MSG['sql'], text, flags=re.IGNORECASE):
+        path = './media/audio/sql.ogg'
+    elif re.search(MSG['love'], text, flags=re.IGNORECASE):
+        path = './media/audio/love.ogg'
+    else:
+        await context.bot.send_sticker(chat_id=update.effective_chat.id,
+                                       sticker=STICKER['error'])
+        await update.message.reply_text(TEXT['error'])
+    if path:
+        await context.bot.send_audio(chat_id=update.effective_chat.id,
+                                     audio=open(path, 'rb'))
+
+send_voice_handler = MessageHandler(filters.TEXT, send_voice)
+
+
 async def send_photo(update, context):
     '''Функция для хэндлера отправки фотографий'''
     if update.message.text == KB['photo'][0][0]:
@@ -84,6 +108,9 @@ async def voice_message(update, context):
     # получить объект аудио из сообщения пользователя
     voice = update.message.voice
 
+    # путь к файлу ответа
+    path = ''
+
     # сохранить аудиофайл
     file_path = f"audio_{voice.file_unique_id}.oga"
     file = await voice.get_file()
@@ -95,8 +122,6 @@ async def voice_message(update, context):
     except Exception:
         logger.error('Не удалось получить контент из аудиособщения')
         # отправить текст о том, что бот не понял, что в аудиосообщении
-        await context.bot.send_sticker(chat_id=update.effective_chat.id,
-                                       sticker=STICKER['error'])
         await update.message.reply_text(TEXT['what'])
     else:
         logger.info(f'Контент получен: "{text}"')
@@ -109,11 +134,12 @@ async def voice_message(update, context):
         elif re.search(MSG['love'], text, flags=re.IGNORECASE):
             path = './media/audio/love.ogg'
         else:
-            path = './media/audio/error.ogg'
             await context.bot.send_sticker(chat_id=update.effective_chat.id,
                                            sticker=STICKER['error'])
-        await context.bot.send_audio(chat_id=update.effective_chat.id,
-                                     audio=open(path, 'rb'))
+            await update.message.reply_text(TEXT['error'])
+        if path:
+            await context.bot.send_audio(chat_id=update.effective_chat.id,
+                                         audio=open(path, 'rb'))
 
     # удалить временные аудиофайлы
     os.remove(file_path)
