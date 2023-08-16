@@ -1,15 +1,20 @@
-from text import TEXT_DICT as TEXT, STICKERS_DICT as STICKER, MSG_DICT as MSG
+import os
+import random
+import re
+
+from telegram.ext import CommandHandler, MessageHandler, filters
+
 from keyboards import KEYBOARDS as KB
 from keyboards import main_markup, photo_markup
-from telegram.ext import MessageHandler, CommandHandler, filters
-import random
-import os
-from utils import speech_to_text
 from logger import setup_logger
-import re
+from text import MSG_DICT as MSG
+from text import STICKERS_DICT as STICKER
+from text import TEXT_DICT as TEXT
+from utils import speech_to_text
 
 # инициируем логгер
 logger = setup_logger(__name__)
+
 
 async def start(update, context):
     '''Функция для приветственного хэндлера'''
@@ -25,7 +30,7 @@ start_handler = CommandHandler('start', start)
 async def choose_photo(update, context):
     '''Функция для хэндлера, уточняющего, какое фото требуется'''
     await update.message.reply_text(TEXT['photo'], reply_markup=photo_markup)
-    
+
 choose_photo_handler = MessageHandler(
     filters.Regex(f"^{KB['main'][0][0]}$"), choose_photo
 )
@@ -49,6 +54,7 @@ async def get_back(update, context):
 get_back_handler = MessageHandler(
     filters.Regex(f"^{KB['photo'][3][0]}$"), get_back
 )
+
 
 async def send_photo(update, context):
     '''Функция для хэндлера отправки фотографий'''
@@ -86,40 +92,35 @@ async def voice_message(update, context):
     # применить функцию распознавания речи
     try:
         text = speech_to_text(file_path)
-    except:
+    except Exception:
         logger.error('Не удалось получить контент из аудиособщения')
         # отправить текст о том, что бот не понял, что в аудиосообщении
         await context.bot.send_sticker(chat_id=update.effective_chat.id,
-                                   sticker=STICKER['error'])
+                                       sticker=STICKER['error'])
         await update.message.reply_text(TEXT['what'])
     else:
         logger.info(f'Контент получен: "{text}"')
         # обработать полученное сообщение
         await update.message.reply_text(TEXT['repeat'].format(text))
         if re.search(MSG['gpt'], text, flags=re.IGNORECASE):
-            # отправить аудио-ответ про чат-гпт
-            await context.bot.send_audio(chat_id=update.effective_chat.id,
-                                 audio=open('./media/audio/gpt.ogg', 'rb'))
+            file_path = './media/audio/gpt.ogg'
         elif re.search(MSG['sql'], text, flags=re.IGNORECASE):
-            # отправить аудио-ответ про сравнение sql и nosql
-            await context.bot.send_audio(chat_id=update.effective_chat.id,
-                                 audio=open('./media/audio/sql.ogg', 'rb'))
+            file_path = './media/audio/sql.ogg'
         elif re.search(MSG['love'], text, flags=re.IGNORECASE):
-            # отправить аудио-ответ про любовь
-            await context.bot.send_audio(chat_id=update.effective_chat.id,
-                                 audio=open('./media/audio/love.ogg', 'rb'))
+            file_path = './media/audio/love.ogg'
         else:
-            # отправить аудио-ответ про то, что ничего не понял
+            file_path = './media/audio/error.ogg'
             await context.bot.send_sticker(chat_id=update.effective_chat.id,
-                                   sticker=STICKER['error'])
-            await context.bot.send_audio(chat_id=update.effective_chat.id,
-                                 audio=open('./media/audio/error.ogg', 'rb'))
+                                           sticker=STICKER['error'])
+        await context.bot.send_audio(chat_id=update.effective_chat.id,
+                                     audio=open(file_path, 'rb'))
 
     # удалить временные аудиофайлы
     os.remove(file_path)
     os.remove(file_path[0:-3] + 'wav')
 
 voice_message_handler = MessageHandler(filters.VOICE, voice_message)
+
 
 async def send_essay(update, context):
     '''Функция для хэндлера, отправляющего эссе'''

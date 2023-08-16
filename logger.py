@@ -11,6 +11,7 @@ file_handler.setLevel(logging.INFO)
 logger = logging.getLogger()
 logger.addHandler(file_handler)
 
+
 def setup_logger(name):
     file_handler = logging.FileHandler(name + ".log")
     file_handler.setFormatter(logging.Formatter(LOG_FORMAT))

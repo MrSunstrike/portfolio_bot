@@ -1,20 +1,20 @@
-from logger import setup_logger
+import sys
 from os import getenv
 
-from telegram.ext import Application
 from dotenv import load_dotenv
-import sys
+from telegram.ext import Application
 
-from handlers import (start_handler, send_docs_handler, choose_photo_handler, 
-                      get_back_handler, send_photo_handler,
-                      voice_message_handler, send_essay_handler)
+from handlers import (choose_photo_handler, get_back_handler,
+                      send_docs_handler, send_essay_handler,
+                      send_photo_handler, start_handler, voice_message_handler)
+from logger import setup_logger
 
 # инициируем логгер
 logger = setup_logger("main")
 
 # достаем токен из окружения
 load_dotenv()
-BOT_TOKEN = getenv('API_TEST_BOT')
+BOT_TOKEN = getenv('BOT_TOKEN')
 
 # инициируем бота под нашим токеном
 try:
